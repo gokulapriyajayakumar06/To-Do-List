@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Advanced To-Do List</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            background: linear-gradient(
+                135deg,
+                #667eea,
+                #764ba2
+            );
+        }
+
+        .container {
+            width: 500px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+
+            box-shadow:
+                0 15px 35px rgba(0, 0, 0, 0.25);
+        }
+
+        h1 {
+            text-align: center;
+            color: #4b2aad;
+            margin-bottom: 25px;
+        }
+
+        .input-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        #taskInput {
+            flex: 1;
+            padding: 14px;
+
+            border: 2px solid #667eea;
+            border-radius: 10px;
+
+            outline: none;
+            font-size: 16px;
+        }
+
+        #taskInput:focus {
+            border-color: #764ba2;
+            box-shadow: 0 0 8px rgba(118, 75, 162, 0.4);
+        }
+
+        #addButton {
+            padding: 14px 20px;
+
+            border: none;
+            border-radius: 10px;
+
+            background: linear-gradient(
+                135deg,
+                #667eea,
+                #764ba2
+            );
+
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        #addButton:hover {
+            transform: scale(1.05);
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            padding: 15px;
+            margin-bottom: 12px;
+
+            background: linear-gradient(
+                135deg,
+                #f8f9ff,
+                #eef0ff
+            );
+
+            border-left: 5px solid #667eea;
+            border-radius: 10px;
+
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.08);
+
+            transition: 0.3s;
+        }
+
+        li:hover {
+            transform: translateX(5px);
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+        }
+
+        .task-text {
+            flex: 1;
+            font-size: 16px;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .completed {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .delete-button {
+            background: linear-gradient(
+                135deg,
+                #ff416c,
+                #ff4b2b
+            );
+
+            color: white;
+
+            border: none;
+            padding: 8px 14px;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .delete-button:hover {
+            transform: scale(1.08);
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #888;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>✨ My To-Do List</h1>
+
+        <div class="input-box">
+
+            <input
+                type="text"
+                id="taskInput"
+                placeholder="Enter your details..."
+            >
+
+            <button id="addButton">
+                Add
+            </button>
+
+        </div>
+
+        <ul id="taskList"></ul>
+
+        <p id="emptyMessage" class="empty-message">
+            No tasks added yet!
+        </p>
+
+    </div>
+
+
+    <script>
+
+        // DOM Elements
+
+        const taskInput =
+            document.getElementById("taskInput");
+
+        const addButton =
+            document.getElementById("addButton");
+
+        const taskList =
+            document.getElementById("taskList");
+
+        const emptyMessage =
+            document.getElementById("emptyMessage");
+
+
+        // Add Task
+
+        addButton.addEventListener("click", addTask);
+
+
+        // Enter key
+
+        taskInput.addEventListener("keypress", function(event) {
+
+            if (event.key === "Enter") {
+                addTask();
+            }
+
+        });
+
+
+        function addTask() {
+
+            const taskValue =
+                taskInput.value.trim();
+
+
+            // Empty input check
+
+            if (taskValue === "") {
+
+                alert("Please enter your details!");
+
+                return;
+            }
+
+
+            // Create LI
+
+            const li =
+                document.createElement("li");
+
+
+            // Create task text
+
+            const span =
+                document.createElement("span");
+
+            span.textContent = taskValue;
+
+            span.className = "task-text";
+
+
+            // Complete task
+
+            span.addEventListener("click", function() {
+
+                span.classList.toggle("completed");
+
+            });
+
+
+            // Create Delete Button
+
+            const deleteButton =
+                document.createElement("button");
+
+            deleteButton.textContent = "Delete";
+
+            deleteButton.className =
+                "delete-button";
+
+
+            // Delete particular task
+
+            deleteButton.addEventListener(
+                "click",
+                function() {
+
+                    li.remove();
+
+                    checkEmpty();
+
+                }
+            );
+
+
+            // Add task and button
+
+            li.appendChild(span);
+
+            li.appendChild(deleteButton);
+
+
+            // Add LI to UL
+
+            taskList.appendChild(li);
+
+
+            // Clear input
+
+            taskInput.value = "";
+
+            taskInput.focus();
+
+
+            checkEmpty();
+
+        }
+
+
+        // Check whether list is empty
+
+        function checkEmpty() {
+
+            if (taskList.children.length === 0) {
+
+                emptyMessage.style.display = "block";
+
+            } else {
+
+                emptyMessage.style.display = "none";
+
+            }
+
+        }
+
+    </script>
+
+</body>
+</html>
